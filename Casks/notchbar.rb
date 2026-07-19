@@ -26,5 +26,6 @@ cask "notchbar" do
 
   uninstall quit: "com.periicles.NotchBar"
 
-  zap trash: "~/Library/Preferences/com.periicles.NotchBar.plist"
+  # Sandboxed app: all its data lives in the container.
+  zap trash: "~/Library/Containers/com.periicles.NotchBar"
 end
