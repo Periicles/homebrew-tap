@@ -1,6 +1,6 @@
 cask "notchbar" do
-  version "0.2.0"
-  sha256 "ece2f64fdb9cc955d894b673987299e3ea030bf6b3cc50d9ba44e6655a8143f8"
+  version "0.3.0"
+  sha256 "1bc521165e99acda4293e0b06c70730a1a88106a891909a0b4fbb0c0aaa84828"
 
   url "https://github.com/Periicles/Notchapp/releases/download/v#{version}/NotchBar.dmg"
   name "NotchBar"
