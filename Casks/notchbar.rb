@@ -7,18 +7,18 @@ cask "notchbar" do
   desc "Shows the current calendar event's progress in the MacBook notch"
   homepage "https://github.com/Periicles/Notchapp"
 
-  # Releases are GitHub pre-releases for now, which the release strategies skip,
-  # so track the version tags directly.
+  # Track version tags directly: robust whether or not a given release is
+  # marked stable, which the github_latest strategy is not.
   livecheck do
     url "https://github.com/Periicles/Notchapp.git"
     strategy :git
     regex(/^v?(\d+(?:\.\d+)+)$/i)
   end
 
-  # NotchBar is ad-hoc signed and not yet Apple-notarized, so a quarantined copy
-  # is rejected by Gatekeeper. Install with `--no-quarantine` to launch it directly:
+  # NotchBar is ad-hoc signed. Notarization needs a paid Apple Developer ID and
+  # is not planned, so a quarantined copy stays rejected by Gatekeeper. Install
+  # with `--no-quarantine` to launch it directly:
   #   brew install --cask --no-quarantine notchbar
-  # Once Developer ID notarization ships this note (and the flag) go away.
   depends_on macos: :sonoma
   depends_on arch: :arm64
 
