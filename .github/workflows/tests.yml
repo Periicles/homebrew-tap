@@ -8,15 +8,9 @@ on:
 
 jobs:
   test-bot:
-    strategy:
-      matrix:
-        os: [ macos-15-intel, macos-26 ]
-        include:
-          - os: ubuntu-latest
-            container: ghcr.io/homebrew/brew:main
-    runs-on: ${{ matrix.os }}
-    container: ${{ matrix.container }}
-    options: ${{ matrix.container != '' && '--privileged' }}
+    # Single macOS runner: this tap ships one arm64-only cask, so there is
+    # nothing to test on Linux or on a second OS.
+    runs-on: macos-15
     permissions:
       actions: read
       checks: read
@@ -33,20 +27,14 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ${{ steps.set-up-homebrew.outputs.gems-path }}
-          key: ${{ matrix.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
-          restore-keys: ${{ matrix.os }}-rubygems-
+          key: macos-15-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
+          restore-keys: macos-15-rubygems-
 
       - run: brew test-bot --only-cleanup-before
 
       - run: brew test-bot --only-setup
 
+      # Style + audit on the cask. Installing it is deliberately not attempted:
+      # the app is ad-hoc signed and needs --no-quarantine, which is not what a
+      # test bot should be exercising.
       - run: brew test-bot --only-tap-syntax
-      - run: brew test-bot --only-formulae
-        if: github.event_name == 'pull_request'
-
-      - name: Upload bottles as artifact
-        if: always() && github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v7
-        with:
-          name: bottles_${{ matrix.os }}
-          path: '*.bottle.*'
