@@ -15,10 +15,6 @@ cask "notchbar" do
     regex(/^v?(\d+(?:\.\d+)+)$/i)
   end
 
-  # NotchBar is ad-hoc signed. Notarization needs a paid Apple Developer ID and
-  # is not planned, so a quarantined copy stays rejected by Gatekeeper. Install
-  # with `--no-quarantine` to launch it directly:
-  #   brew install --cask --no-quarantine notchbar
   depends_on macos: :sonoma
   depends_on arch: :arm64
 
@@ -28,4 +24,19 @@ cask "notchbar" do
 
   # Sandboxed app: all its data lives in the container.
   zap trash: "~/Library/Containers/com.periicles.NotchBar"
+
+  # Homebrew 6 removed `--no-quarantine` and quarantines every cask, which an
+  # ad-hoc signature cannot pass. The flag comes back on each upgrade too: an
+  # unquarantined app is only carried forward while its signing identity holds,
+  # and an ad-hoc one is designated by a cdhash that every build changes.
+  caveats do
+    <<~EOS
+      NotchBar is ad-hoc signed, not notarized by Apple, so macOS refuses to open
+      it while it carries the quarantine flag Homebrew sets. Clear the flag:
+
+        xattr -dr com.apple.quarantine #{appdir}/NotchBar.app
+
+      Run that again after every `brew upgrade --cask notchbar`.
+    EOS
+  end
 end
